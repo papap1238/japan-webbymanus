@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan Kosakata Jepang - Pilih Level</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap' );
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        /* Level Selection Menu */
+        .level-selection-container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .level-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 20px 10px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            text-align: center;
+        }
+
+        .level-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+        }
+
+        /* Game Area */
+        .game-container {
+            background: #ffffff;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .progress-board {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .question-card .word {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            font-size: 2.8em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 5px;
+        }
+
+        .answer-section input {
+            width: calc(100% - 24px);
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #submit-btn { background-color: #2ecc71; color: white; }
+        #next-btn { background-color: #3498db; color: white; }
+        #back-to-menu-btn { background-color: #95a5a6; color: white; margin-top: 10px; }
+
+        .feedback {
+            margin-top: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            min-height: 40px;
+        }
+        .feedback.correct { color: #27ae60; }
+        .feedback.incorrect { color: #e74c3c; }
+
+        /* Notes Section */
+        .notes-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #34495e; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <h1>Latihan Kosakata Bahasa Jepang</h1>
+
+        <div id="level-selection" class="level-selection-container">
+            <h2>Pilih Level</h2>
+            <div id="level-grid" class="level-grid"></div>
+        </div>
+
+        <div id="game-area" class="game-container" style="display: none;">
+            <div class="progress-board">
+                <div id="level-display">Level: 1</div>
+                <div id="progress-display">Soal: 1/5</div>
+            </div>
+            <div class="question-card">
+                <p>Apa arti dari kata di bawah ini?</p>
+                <div class="word" id="question-word">...</div>
+            </div>
+            <div class="answer-section">
+                <input type="text" id="answer-input" placeholder="Ketik jawaban (Bahasa Indonesia)..." autocomplete="off">
+            </div>
+            <div class="feedback" id="feedback-message"></div>
+            <div class="button-group" style="margin-top: 20px;">
+                <button id="submit-btn">Cek Jawaban</button>
+                <button id="next-btn" style="display: none;">Lanjut</button>
+                <button id="back-to-menu-btn" style="display: none;">Kembali ke Menu</button>
+            </div>
+        </div>
+
+        <div class="notes-container">
+            <h2>Daftar Kosakata (Kata Benda 1/1)</h2>
+            <table id="vocabulary-table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Bahasa Indonesia</th>
+                        <th>Tulisan Jepang</th>
+                        <th>Cara Baca (Rōmaji)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const vocabulary = [
+            { id: 'Huruf Hiragana', jp_display: 'ひらがな', romaji: 'hiragana' },
+            { id: 'Huruf Katakana', jp_display: 'カタカナ', romaji: 'katakana' },
+            { id: 'Huruf Kanji', jp_display: 'かんじ', romaji: 'kanji' },
+            { id: 'Huruf Latin', jp_display: 'ローマじ', romaji: 'rōmaji' },
+            { id: 'Buku catatan', jp_display: 'ノート', romaji: 'nōto' },
+            { id: 'Buku', jp_display: 'ほん', romaji: 'hon' },
+            { id: 'Majalah Kertas', jp_display: 'ざっし', romaji: 'zasshi' },
+            { id: 'Kertas', jp_display: 'かみ', romaji: 'kami' },
+            { id: 'Koran', jp_display: 'しんぶん', romaji: 'shinbun' },
+            { id: 'Kamus', jp_display: 'じしょ', romaji: 'jisho' },
+            { id: 'Radio kaset', jp_display: 'ラジオカセ', romaji: 'rajiokase' },
+            { id: 'Gunting', jp_display: 'はさみ', romaji: 'hasami' },
+            { id: 'Radio', jp_display: 'ラジオ', romaji: 'rajio' },
+            { id: 'Televisi', jp_display: 'テレビ', romaji: 'terebi' },
+            { id: 'Kamera', jp_display: 'カメラ', romaji: 'kamera' },
+            { id: 'Makanan', jp_display: 'たべもの', romaji: 'tabemono' },
+            { id: 'Minuman', jp_display: 'のみもの', romaji: 'nomimono' },
+            { id: 'Buah-Buahan', jp_display: 'くだもの', romaji: 'kudamono' },
+            { id: 'Nasi', jp_display: 'ごはん', romaji: 'gohan' },
+            { id: 'Roti', jp_display: 'パン', romaji: 'pan' },
+            { id: 'Rumah', jp_display: 'うち', romaji: 'uchi' },
+            { id: 'Perusahaan', jp_display: 'かいしゃ', romaji: 'kaisha' },
+            { id: 'Pabrik', jp_display: 'こうじょう', romaji: 'kōjō' },
+            { id: 'Stasiun', jp_display: 'えき', romaji: 'eki' },
+            { id: 'Bank', jp_display: 'ぎんこう', romaji: 'ginkō' },
+            { id: 'Rumah Sakit', jp_display: 'びょういん', romaji: 'byōin' },
+            { id: 'Departmen Store', jp_display: 'デパート', romaji: 'depāto' },
+            { id: 'Toko Buku', jp_display: 'ほんや', romaji: 'honya' },
+            { id: 'Kantor', jp_display: 'じむしょ', romaji: 'jimusho' },
+            { id: 'Ruang Kelas', jp_display: 'きょうしつ', romaji: 'kyōshitsu' },
+            { id: 'Kamar', jp_display: 'へや', romaji: 'heya' },
+            { id: 'Ruang Makan', jp_display: 'しょくどう', romaji: 'shokudō' },
+            { id: 'Kamar Kecil', jp_display: 'トイレ', romaji: 'toire' },
+            { id: 'Lobi', jp_display: 'ロビー', romaji: 'robī' },
+            { id: 'Resepsionis', jp_display: 'うけつけ', romaji: 'uketsuke' },
+            { id: 'Halaman', jp_display: 'にわ', romaji: 'niwa' },
+            { id: 'Sumpit', jp_display: 'はし', romaji: 'hashi' },
+            { id: 'Pisau', jp_display: 'ナイフ', romaji: 'naifu' },
+            { id: 'Garpu', jp_display: 'フォーク', romaji: 'fōku' },
+            { id: 'Sendok', jp_display: 'スプーン', romaji: 'supūn' },
+            { id: 'Kursi', jp_display: 'いす', romaji: 'isu' },
+            { id: 'Meja', jp_display: 'つくえ', romaji: 'tsukue' },
+            { id: 'Jendela', jp_display: 'まど', romaji: 'mado' },
+            { id: 'Pintu', jp_display: 'ドア', romaji: 'doa' },
+            { id: 'Lampu Listrik', jp_display: 'でんき', romaji: 'denki' },
+            { id: 'Kotak', jp_display: 'はこ', romaji: 'hako' },
+            { id: 'Mobil', jp_display: 'くるま', romaji: 'kuruma' },
+            { id: 'Pagi', jp_display: 'あさ', romaji: 'asa' },
+            { id: 'Siang', jp_display: 'ひる', romaji: 'hiru' },
+            { id: 'Malam', jp_display: 'よる', romaji: 'yoru' },
+            { id: 'Dasi', jp_display: 'ネクタイ', romaji: 'nekutai' },
+            { id: 'Kemeja', jp_display: 'シャツ', romaji: 'shatsu' },
+            { id: 'Sepatu', jp_display: 'くつ', romaji: 'kutsu' },
+            { id: 'Rokok', jp_display: 'たばこ', romaji: 'tabako' },
+            { id: 'Asbak', jp_display: 'はいざら', romaji: 'haizara' },
+            { id: 'Pensil', jp_display: 'えんぴつ', romaji: 'enpitsu' },
+            { id: 'Pulpen', jp_display: 'ボールペン', romaji: 'bōrupen' },
+            { id: 'Kunci', jp_display: 'かぎ', romaji: 'kagi' },
+            { id: 'Jam', jp_display: 'とけい', romaji: 'tokei' },
+            { id: 'Tas', jp_display: 'かばん', romaji: 'kaban' }
+        ];
+
+        // --- Game State & Elements ---
+        let currentLevel;
+        let questionsForLevel;
+        let incorrectQuestions;
+
+        const wordsPerLevel = 5;
+        const levelSelectionEl = document.getElementById('level-selection');
+        const gameAreaEl = document.getElementById('game-area');
+        const levelGridEl = document.getElementById('level-grid');
+        const questionWordEl = document.getElementById('question-word');
+        const answerInputEl = document.getElementById('answer-input');
+        const feedbackMessageEl = document.getElementById('feedback-message');
+        const levelDisplayEl = document.getElementById('level-display');
+        const progressDisplayEl = document.getElementById('progress-display');
+        const submitBtn = document.getElementById('submit-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const backToMenuBtn = document.getElementById('back-to-menu-btn');
+        const tableBody = document.querySelector("#vocabulary-table tbody");
+
+        // --- Functions ---
+        function showLevelSelection() {
+            levelSelectionEl.style.display = 'block';
+            gameAreaEl.style.display = 'none';
+        }
+
+        function showGameArea() {
+            levelSelectionEl.style.display = 'none';
+            gameAreaEl.style.display = 'block';
+        }
+
+        function createLevelButtons() {
+            const numLevels = Math.ceil(vocabulary.length / wordsPerLevel);
+            levelGridEl.innerHTML = '';
+            for (let i = 0; i < numLevels; i++) {
+                const levelBtn = document.createElement('button');
+                levelBtn.className = 'level-btn';
+                levelBtn.textContent = `Level ${i + 1}`;
+                levelBtn.dataset.level = i + 1;
+                levelBtn.addEventListener('click', () => startLevel(i + 1));
+                levelGridEl.appendChild(levelBtn);
+            }
+        }
+
+        function startLevel(level) {
+            currentLevel = level;
+            const levelStartIndex = (level - 1) * wordsPerLevel;
+            const levelEndIndex = Math.min(levelStartIndex + wordsPerLevel, vocabulary.length);
+            
+            questionsForLevel = vocabulary.slice(levelStartIndex, levelEndIndex);
+            incorrectQuestions = [];
+            
+            showGameArea();
+            setQuestion();
+        }
+
+        function setQuestion() {
+            if (questionsForLevel.length === 0 && incorrectQuestions.length === 0) {
+                // Level Complete
+                questionWordEl.textContent = "🏆";
+                feedbackMessageEl.innerHTML = `<strong>Selamat! Level ${currentLevel} selesai!</strong>`;
+                answerInputEl.style.display = 'none';
+                submitBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+                backToMenuBtn.style.display = 'block';
+                return;
+            }
+
+            if (questionsForLevel.length === 0) {
+                // Start reviewing incorrect questions
+                questionsForLevel = incorrectQuestions;
+                incorrectQuestions = [];
+                feedbackMessageEl.textContent = "Mari kita coba lagi soal yang salah.";
+            }
+
+            updateProgress();
+            const question = questionsForLevel[0]; // Always take the first question
+            questionWordEl.textContent = question.jp_display;
+            
+            answerInputEl.value = '';
+            if (feedbackMessageEl.className !== 'feedback') {
+                feedbackMessageEl.textContent = '';
+            }
+            feedbackMessageEl.className = 'feedback';
+            answerInputEl.disabled = false;
+            answerInputEl.style.display = 'block';
+            submitBtn.style.display = 'block';
+            nextBtn.style.display = 'none';
+            backToMenuBtn.style.display = 'none';
+            answerInputEl.focus();
+        }
+
+        function updateProgress() {
+            const totalQuestionsInLevel = Math.min(wordsPerLevel, vocabulary.length - ((currentLevel - 1) * wordsPerLevel));
+            const questionsAnswered = totalQuestionsInLevel - questionsForLevel.length - incorrectQuestions.length;
+            levelDisplayEl.textContent = `Level: ${currentLevel}`;
+            progressDisplayEl.textContent = `Soal: ${questionsAnswered + 1}/${totalQuestionsInLevel}`;
+        }
+
+        function checkAnswer() {
+            const userAnswer = answerInputEl.value.trim().toLowerCase();
+            if (!userAnswer) return;
+
+            const currentQuestion = questionsForLevel[0];
+            const correctAnswer = currentQuestion.id.toLowerCase();
+
+            if (userAnswer === correctAnswer) {
+                feedbackMessageEl.textContent = 'Benar! 👍';
+                feedbackMessageEl.className = 'feedback correct';
+            } else {
+                feedbackMessageEl.innerHTML = `Salah. Jawaban yang benar: <strong>${currentQuestion.id}</strong>`;
+                feedbackMessageEl.className = 'feedback incorrect';
+                incorrectQuestions.push(currentQuestion); // Add to incorrect stack
+            }
+            
+            questionsForLevel.shift(); // Remove the question from the current queue
+
+            answerInputEl.disabled = true;
+            submitBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+            nextBtn.focus();
+        }
+
+        function populateTable() {
+            vocabulary.forEach((word, index) => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${word.id}</td>
+                    <td>${word.jp_display}</td>
+                    <td>${word.romaji}</td>
+                `;
+            });
+        }
+
+        // --- Event Listeners ---
+        submitBtn.addEventListener('click', checkAnswer);
+        nextBtn.addEventListener('click', setQuestion);
+        backToMenuBtn.addEventListener('click', showLevelSelection);
+        answerInputEl.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                if (submitBtn.style.display !== 'none') checkAnswer();
+                else if (nextBtn.style.display !== 'none') setQuestion();
+            }
+        });
+
+        // --- Initialization ---
+        function initialize() {
+            populateTable();
+            createLevelButtons();
+            showLevelSelection();
+        }
+
+        initialize();
+    </script>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latihan Kosakata Jepang - Estetik</title>
+    <title>Latihan Kosakata Jepang - Versi Final</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Poppins:wght@400;600&display=swap' );
 
@@ -109,6 +109,7 @@
             color: var(--dark-color);
             margin-top: 5px;
             animation: popIn 0.4s ease-out;
+            text-align: center; /* Memusatkan teks soal */
         }
 
         .answer-section input {
@@ -155,6 +156,7 @@
             font-weight: 700;
             min-height: 40px;
             animation: popIn 0.3s;
+            text-align: center; /* Memusatkan teks feedback */
         }
         .feedback.correct { color: var(--success-color); }
         .feedback.incorrect { color: var(--danger-color); }
@@ -281,7 +283,7 @@
         let questionsForLevel;
         let incorrectQuestions;
         const wordsPerLevel = 5;
-        const clickSound = new Audio('ea.mp3'); // <-- Inisialisasi audio
+        const clickSound = new Audio('ea.mp3');
 
         const levelSelectionEl = document.getElementById('level-selection');
         const gameAreaEl = document.getElementById('game-area');
@@ -298,8 +300,8 @@
 
         // --- Functions ---
         function playClickSound() {
-            clickSound.currentTime = 0; // Rewind to the start
-            clickSound.play();
+            clickSound.currentTime = 0;
+            clickSound.play().catch(error => console.log("Audio play failed:", error));
         }
 
         function showLevelSelection() {

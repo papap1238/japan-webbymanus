@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babak Kata Kerja - Game Kosakata</title>
+    <!-- Semua CSS dari file game sebelumnya tetap sama -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Poppins:wght@400;600&display=swap' );
+        :root { --primary-color: #5e72e4; --secondary-color: #8965e0; --success-color: #2dce89; --danger-color: #f5365c; --light-color: #f8f9fe; --dark-color: #32325d; --text-color: #525f7f; --card-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07); }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--text-color); line-height: 1.6; margin: 0; padding: 20px; padding-top: 80px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+        .navbar { background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); padding: 0 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; display: flex; justify-content: center; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 840px; width: 100%; height: 60px; }
+        .nav-brand { font-weight: 800; font-size: 1.5em; color: var(--dark-color); text-decoration: none; }
+        .nav-menu { display: flex; gap: 20px; }
+        .nav-link { color: var(--text-color); text-decoration: none; font-weight: 600; padding: 8px 12px; border-radius: 8px; transition: background-color 0.3s, color 0.3s; }
+        .nav-link:hover { background-color: var(--primary-color); color: white; }
+        .nav-link.active { background-color: var(--primary-color); color: white; }
+        .main-container { max-width: 800px; width: 100%; margin: 0 auto; }
+        h1, h2 { text-align: center; color: var(--dark-color); font-weight: 800; }
+        h1 { font-size: 2.5em; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        h2 { font-size: 1.8em; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 70% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); } }
+        .card { background: #ffffff; padding: 30px; border-radius: 20px; box-shadow: var(--card-shadow); margin-bottom: 30px; animation: fadeIn 0.5s ease-out forwards; }
+        .level-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin-top: 20px; }
+        .level-btn { background: linear-gradient(45deg, #6b82fa, #8362f1); color: white; border: none; padding: 20px 10px; border-radius: 15px; font-size: 1.2em; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08); }
+        .level-btn:hover { transform: translateY(-5px); box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08); }
+        .progress-board { display: flex; justify-content: space-between; font-size: 1.2em; color: var(--text-color); margin-bottom: 20px; font-weight: 600; }
+        .question-card .word { font-family: 'M PLUS Rounded 1c', sans-serif; font-size: 3.5em; font-weight: 800; color: var(--dark-color); margin-top: 5px; animation: popIn 0.4s ease-out; text-align: center; }
+        .answer-section input { width: calc(100% - 28px); padding: 14px; border: 2px solid #dee2e6; border-radius: 10px; font-size: 1.2em; text-align: center; transition: all 0.3s; }
+        .answer-section input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.3); }
+        button { width: 100%; padding: 14px 20px; border: none; border-radius: 10px; font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08); }
+        button:hover { transform: translateY(-2px); }
+        button:active { transform: translateY(1px); box-shadow: none; }
+        #submit-btn { background: var(--success-color); color: white; }
+        #next-btn { background: var(--primary-color); color: white; }
+        #back-to-menu-btn { background: #8898aa; color: white; margin-top: 10px; }
+        .feedback { margin-top: 15px; font-size: 1.3em; font-weight: 700; min-height: 40px; animation: popIn 0.3s; text-align: center; }
+        .feedback.correct { color: var(--success-color); }
+        .feedback.incorrect { color: var(--danger-color); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #e9ecef; text-align: left; }
+        th { background-color: var(--dark-color); color: white; }
+        tr:nth-child(even) { background-color: var(--light-color); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">日本語 App</a>
+            <div class="nav-menu">
+                <a href="game.html" class="nav-link active">Game Kosakata</a>
+                <a href="huruf.html" class="nav-link">Tabel Huruf</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <h1>Babak Kata Kerja</h1>
+
+        <div id="level-selection" class="card">
+            <h2>Pilih Level</h2>
+            <div id="level-grid" class="level-grid"></div>
+        </div>
+
+        <div id="game-area" class="card" style="display: none;">
+            <div class="progress-board">
+                <div id="level-display"></div>
+                <div id="progress-display"></div>
+            </div>
+            <div class="question-card">
+                <p>Apa arti dari kata di bawah ini?</p>
+                <div class="word" id="question-word">...</div>
+            </div>
+            <div class="answer-section">
+                <input type="text" id="answer-input" placeholder="Ketik jawaban (Bahasa Indonesia)..." autocomplete="off">
+            </div>
+            <div class="feedback" id="feedback-message"></div>
+            <div class="button-group" style="margin-top: 20px;">
+                <button id="submit-btn">Cek Jawaban</button>
+                <button id="next-btn" style="display: none;">Lanjut</button>
+                <button id="back-to-menu-btn" style="display: none;">Kembali ke Menu Level</button>
+            </div>
+        </div>
+
+        <!-- BAGIAN BARU: TABEL DAFTAR KOSAKATA -->
+        <div class="card">
+            <h2>Daftar Kata Kerja</h2>
+            <table id="vocabulary-table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Bahasa Indonesia</th>
+                        <th>Tulisan Jepang</th>
+                        <th>Cara Baca (Rōmaji)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const vocabulary = [
+            { id: 'Belajar', jp_display: 'べんきょうします', romaji: 'benkyō shimasu' },
+            { id: 'Praktek', jp_display: 'じっしゅうします', romaji: 'jisshū shimasu' },
+            { id: 'Memperbaiki', jp_display: 'しゅうりします', romaji: 'shūri shimasu' },
+            { id: 'Bekerja', jp_display: 'はたらきます', romaji: 'hatarakimasu' },
+            { id: 'Istirahat', jp_display: 'やすみます', romaji: 'yasumimasu' },
+            { id: 'Mengajar', jp_display: 'おしえます', romaji: 'oshiemasu' },
+            { id: 'Belajar', jp_display: 'ならいます', romaji: 'naraimasu' },
+            { id: 'Bertanya', jp_display: 'しつもんします', romaji: 'shitsumon shimasu' },
+            { id: 'Mengerti', jp_display: 'わかります', romaji: 'wakarimasu' },
+            { id: 'Mengingat', jp_display: 'おぼえます', romaji: 'oboemasu' },
+            { id: 'Lupa', jp_display: 'わすれます', romaji: 'wasuremasu' },
+            { id: 'Memeriksa', jp_display: 'しらべます', romaji: 'shirabemasu' },
+            { id: 'Mulai', jp_display: 'はじめます', romaji: 'hajimemasu' },
+            { id: 'Selesai', jp_display: 'おわります', romaji: 'owarimasu' },
+            { id: 'Memperlihatkan', jp_display: 'みせます', romaji: 'misemasu' },
+            { id: 'Memberitahu', jp_display: 'おしえます', romaji: 'oshiemasu' },
+            { id: 'Menulis', jp_display: 'かきます', romaji: 'kakimasu' },
+            { id: 'Membaca', jp_display: 'よみます', romaji: 'yomimasu' },
+            { id: 'Mendengar', jp_display: 'ききます', romaji: 'kikimasu' },
+            { id: 'Melihat', jp_display: 'みます', romaji: 'mimasu' },
+            { id: 'Bangun Tidur', jp_display: 'おきます', romaji: 'okimasu' },
+            { id: 'Tidur', jp_display: 'ねます', romaji: 'nemasu' },
+            { id: 'Pergi', jp_display: 'いきます', romaji: 'ikimasu' },
+            { id: 'Datang', jp_display: 'きます', romaji: 'kimasu' },
+            { id: 'Pulang', jp_display: 'かえります', romaji: 'kaerimasu' },
+            { id: 'Makan', jp_display: 'たべます', romaji: 'tabemasu' },
+            { id: 'Minum', jp_display: 'のみます', romaji: 'nomimasu' },
+            { id: 'Menghisap', jp_display: 'すいます', romaji: 'suimasu' },
+            { id: 'Berdiri', jp_display: 'たちます', romaji: 'tachimasu' },
+            { id: 'Duduk', jp_display: 'すわります', romaji: 'suwarimasu' },
+            { id: 'Membeli', jp_display: 'かいます', romaji: 'kaimasu' },
+            { id: 'Mengambil', jp_display: 'とります', romaji: 'torimasu' },
+            { id: 'Memotong', jp_display: 'きります', romaji: 'kirimasu' },
+            { id: 'Menyentuh', jp_display: 'さわります', romaji: 'sawarimasu' },
+            { id: 'Tertawa', jp_display: 'わらいます', romaji: 'waraimasu' },
+            { id: 'Mencuci', jp_display: 'あらいます', romaji: 'araimasu' },
+            { id: 'Membersihkan', jp_display: 'そうじします', romaji: 'sōji shimasu' },
+            { id: 'Jadi/bisa', jp_display: 'できます', romaji: 'dekimasu' },
+            { id: 'Ada (Bernyawa)', jp_display: 'います', romaji: 'imasu' },
+            { id: 'Ada (Benda)', jp_display: 'あります', romaji: 'arimasu' },
+            { id: 'Memberi', jp_display: 'あげます', romaji: 'agemasu' },
+            { id: 'Menerima', jp_display: 'もらいます', romaji: 'moraimasu' },
+            { id: 'Meminjamkan', jp_display: 'かします', romaji: 'kashimasu' },
+            { id: 'Meminjam', jp_display: 'かります', romaji: 'karimasu' },
+            { id: 'Bertemu', jp_display: 'あいます', romaji: 'aimasu' },
+            { id: 'Menelpon', jp_display: 'でんわをかけます', romaji: 'denwa o kakemasu' },
+            { id: 'Menyalakan', jp_display: 'つけます', romaji: 'tsukemasu' },
+            { id: 'Memadamkan', jp_display: 'けします', romaji: 'keshimasu' },
+            { id: 'Membuka', jp_display: 'あけます', romaji: 'akemasu' },
+            { id: 'Menutup', jp_display: 'しめます', romaji: 'shimemasu' },
+            { id: 'Masuk', jp_display: 'はいります', romaji: 'hairimasu' },
+            { id: 'Keluar', jp_display: 'でます', romaji: 'demasu' },
+            { id: 'Naik', jp_display: 'のります', romaji: 'norimasu' },
+            { id: 'Turun', jp_display: 'おります', romaji: 'orimasu' },
+            { id: 'Membayar', jp_display: 'はらいます', romaji: 'haraimasu' },
+            { id: 'Berbicara', jp_display: 'はなします', romaji: 'hanashimasu' },
+            { id: 'Berkata', jp_display: 'いいます', romaji: 'iimasu' },
+            { id: 'Menunggu', jp_display: 'まちます', romaji: 'machimasu' },
+            { id: 'Tergesa-gesa', jp_display: 'いそぎます', romaji: 'isogimasu' },
+            { id: 'Memanggil', jp_display: 'よびます', romaji: 'yobimasu' }
+        ];
+
+        // --- Game State & Elements ---
+        let currentLevel, questionsForLevel, incorrectQuestions;
+        const wordsPerLevel = 5;
+        const clickSound = new Audio('ea.mp3');
+        const levelSelectionEl = document.getElementById('level-selection'), gameAreaEl = document.getElementById('game-area'), levelGridEl = document.getElementById('level-grid'), questionWordEl = document.getElementById('question-word'), answerInputEl = document.getElementById('answer-input'), feedbackMessageEl = document.getElementById('feedback-message'), levelDisplayEl = document.getElementById('level-display'), progressDisplayEl = document.getElementById('progress-display'), submitBtn = document.getElementById('submit-btn'), nextBtn = document.getElementById('next-btn'), backToMenuBtn = document.getElementById('back-to-menu-btn');
+        
+        // BAGIAN BARU: Variabel untuk tabel
+        const tableBody = document.querySelector("#vocabulary-table tbody");
+
+        // --- Functions ---
+        function playClickSound() { clickSound.currentTime = 0; clickSound.play().catch(e => console.log("Audio play failed:", e)); }
+        function showScreen(screen) { levelSelectionEl.style.display = 'none'; gameAreaEl.style.display = 'none'; document.getElementById(screen).style.display = 'block'; }
+        function createLevelButtons() { const numLevels = Math.ceil(vocabulary.length / wordsPerLevel); levelGridEl.innerHTML = ''; for (let i = 0; i < numLevels; i++) { const levelBtn = document.createElement('button'); levelBtn.className = 'level-btn'; levelBtn.textContent = `Level ${i + 1}`; levelBtn.addEventListener('click', () => { playClickSound(); startLevel(i + 1); }); levelGridEl.appendChild(levelBtn); } }
+        function startLevel(level) { currentLevel = level; const levelStartIndex = (level - 1) * wordsPerLevel; const levelEndIndex = Math.min(levelStartIndex + wordsPerLevel, vocabulary.length); questionsForLevel = vocabulary.slice(levelStartIndex, levelEndIndex); incorrectQuestions = []; showScreen('game-area'); setQuestion(); }
+        function setQuestion() { if (questionsForLevel.length === 0 && incorrectQuestions.length === 0) { questionWordEl.textContent = "🏆"; feedbackMessageEl.innerHTML = `<strong>Selamat! Level ${currentLevel} selesai!</strong>`; answerInputEl.style.display = 'none'; submitBtn.style.display = 'none'; nextBtn.style.display = 'none'; backToMenuBtn.style.display = 'block'; return; } if (questionsForLevel.length === 0) { questionsForLevel = incorrectQuestions; incorrectQuestions = []; feedbackMessageEl.textContent = "Ulangi soal yang salah..."; } updateProgress(); const question = questionsForLevel[0]; questionWordEl.textContent = question.jp_display; questionWordEl.style.animation = 'none'; requestAnimationFrame(() => { questionWordEl.style.animation = 'popIn 0.4s ease-out'; }); answerInputEl.value = ''; if (feedbackMessageEl.className !== 'feedback') feedbackMessageEl.textContent = ''; feedbackMessageEl.className = 'feedback'; answerInputEl.disabled = false; answerInputEl.style.display = 'block'; submitBtn.style.display = 'block'; nextBtn.style.display = 'none'; backToMenuBtn.style.display = 'none'; answerInputEl.focus(); }
+        function updateProgress() { const totalQuestionsInLevel = Math.min(wordsPerLevel, vocabulary.length - ((currentLevel - 1) * wordsPerLevel)); const questionsAnswered = totalQuestionsInLevel - questionsForLevel.length - incorrectQuestions.length; levelDisplayEl.textContent = `Babak Kata Kerja - Level: ${currentLevel}`; progressDisplayEl.textContent = `Soal: ${questionsAnswered + 1}/${totalQuestionsInLevel}`; }
+        function checkAnswer() { const userAnswer = answerInputEl.value.trim().toLowerCase(); if (!userAnswer) return; const currentQuestion = questionsForLevel[0]; const correctAnswer = currentQuestion.id.toLowerCase(); if (userAnswer === correctAnswer) { feedbackMessageEl.textContent = 'Benar! 🎉'; feedbackMessageEl.className = 'feedback correct'; } else { feedbackMessageEl.innerHTML = `Salah. Jawaban: <strong>${currentQuestion.id}</strong>`; feedbackMessageEl.className = 'feedback incorrect'; incorrectQuestions.push(currentQuestion); } questionsForLevel.shift(); answerInputEl.disabled = true; submitBtn.style.display = 'none'; nextBtn.style.display = 'block'; nextBtn.focus(); }
+        
+        // BAGIAN BARU: Fungsi untuk mengisi tabel
+        function populateTable() {
+            vocabulary.forEach((word, index) => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${word.id}</td>
+                    <td>${word.jp_display}</td>
+                    <td>${word.romaji}</td>
+                `;
+            });
+        }
+
+        // --- Event Listeners ---
+        backToMenuBtn.addEventListener('click', () => { playClickSound(); showScreen('level-selection'); });
+        submitBtn.addEventListener('click', () => { playClickSound(); checkAnswer(); });
+        nextBtn.addEventListener('click', () => { playClickSound(); setQuestion(); });
+        answerInputEl.addEventListener('keypress', (event) => { if (event.key === 'Enter') { if (submitBtn.style.display !== 'none') { playClickSound(); checkAnswer(); } else if (nextBtn.style.display !== 'none') { playClickSound(); setQuestion(); } } });
+        
+        // --- Initialization ---
+        function initialize() {
+            populateTable(); // Panggil fungsi untuk mengisi tabel
+            createLevelButtons();
+            showScreen('level-selection');
+        }
+
+        initialize(); // Jalankan inisialisasi
+    </script>
+</body>
+</html>

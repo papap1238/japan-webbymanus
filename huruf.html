@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabel Huruf Jepang</title>
+    <style>
+        /* Menggunakan CSS yang sama dengan halaman utama untuk konsistensi */
+        @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&family=Poppins:wght@400;600&display=swap' );
+        :root {
+            --primary-color: #5e72e4;
+            --secondary-color: #8965e0;
+            --dark-color: #32325d;
+            --text-color: #525f7f;
+            --card-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            padding-top: 80px;
+        }
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 840px;
+            width: 100%;
+            height: 60px;
+        }
+        .nav-brand {
+            font-weight: 800;
+            font-size: 1.5em;
+            color: var(--dark-color);
+            text-decoration: none;
+        }
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .nav-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .main-container { max-width: 800px; width: 100%; margin: 20px auto; }
+        h1, h2 { text-align: center; color: var(--dark-color); font-weight: 800; }
+        h1 { font-size: 2.5em; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-bottom: 20px; }
+        h2 { font-size: 1.8em; border-bottom: 3px solid var(--primary-color); display: inline-block; padding-bottom: 5px; margin-top: 40px; }
+        .card { background: #ffffff; padding: 30px; border-radius: 20px; box-shadow: var(--card-shadow); margin-bottom: 30px; text-align: center; }
+        .kana-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .kana-table th, .kana-table td {
+            border: 1px solid #e9ecef;
+            padding: 10px;
+            font-size: 1.5em; /* Perbesar huruf kana */
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            font-weight: 700;
+            width: 20%; /* Untuk tabel 5 kolom */
+        }
+        .kana-table.yoon-table td {
+             width: 33.33%; /* Untuk tabel 3 kolom */
+        }
+        .kana-table th {
+            background-color: var(--dark-color);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+        }
+        .kana-table td span {
+            display: block;
+            font-size: 0.7em; /* Perkecil romaji */
+            font-weight: 400;
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">日本語 App</a>
+            <div class="nav-menu">
+                <a href="game.html" class="nav-link">Game Kosakata</a>
+                <a href="huruf.html" class="nav-link active">Tabel Huruf</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <h1>Tabel Huruf Jepang (Kana)</h1>
+
+        <div class="card">
+            <h2>Hiragana (ひらがな)</h2>
+            <div id="hiragana-tables"></div>
+        </div>
+
+        <div class="card">
+            <h2>Katakana (カタカナ)</h2>
+            <div id="katakana-tables"></div>
+        </div>
+    </div>
+
+    <script>
+        const kanaData = {
+            hiragana: {
+                basic: [
+                    ['あ', 'a'], ['い', 'i'], ['う', 'u'], ['え', 'e'], ['お', 'o'],
+                    ['か', 'ka'], ['き', 'ki'], ['く', 'ku'], ['け', 'ke'], ['こ', 'ko'],
+                    ['さ', 'sa'], ['し', 'shi'], ['す', 'su'], ['せ', 'se'], ['そ', 'so'],
+                    ['た', 'ta'], ['ち', 'chi'], ['つ', 'tsu'], ['て', 'te'], ['と', 'to'],
+                    ['な', 'na'], ['に', 'ni'], ['ぬ', 'nu'], ['ね', 'ne'], ['の', 'no'],
+                    ['は', 'ha'], ['ひ', 'hi'], ['ふ', 'fu'], ['へ', 'he'], ['ほ', 'ho'],
+                    ['ま', 'ma'], ['み', 'mi'], ['む', 'mu'], ['め', 'me'], ['も', 'mo'],
+                    ['や', 'ya'], ['', ''], ['ゆ', 'yu'], ['', ''], ['よ', 'yo'],
+                    ['ら', 'ra'], ['り', 'ri'], ['る', 'ru'], ['れ', 're'], ['ろ', 'ro'],
+                    ['わ', 'wa'], ['', ''], ['', ''], ['', ''], ['を', 'wo'],
+                    ['ん', 'n'], ['', ''], ['', ''], ['', ''], ['', '']
+                ],
+                dakuon: [
+                    ['が', 'ga'], ['ぎ', 'gi'], ['ぐ', 'gu'], ['げ', 'ge'], ['ご', 'go'],
+                    ['ざ', 'za'], ['じ', 'ji'], ['ず', 'zu'], ['ぜ', 'ze'], ['ぞ', 'zo'],
+                    ['だ', 'da'], ['ぢ', 'ji'], ['づ', 'zu'], ['で', 'de'], ['ど', 'do'],
+                    ['ば', 'ba'], ['び', 'bi'], ['ぶ', 'bu'], ['べ', 'be'], ['ぼ', 'bo'],
+                    ['ぱ', 'pa'], ['ぴ', 'pi'], ['ぷ', 'pu'], ['ぺ', 'pe'], ['ぽ', 'po']
+                ],
+                yoon: [
+                    ['きゃ', 'kya'], ['きゅ', 'kyu'], ['きょ', 'kyo'],
+                    ['しゃ', 'sha'], ['しゅ', 'shu'], ['しょ', 'sho'],
+                    ['ちゃ', 'cha'], ['ちゅ', 'chu'], ['ちょ', 'cho'],
+                    ['にゃ', 'nya'], ['にゅ', 'nyu'], ['にょ', 'nyo'],
+                    ['ひゃ', 'hya'], ['ひゅ', 'hyu'], ['ひょ', 'hyo'],
+                    ['みゃ', 'mya'], ['みゅ', 'myu'], ['みょ', 'myo'],
+                    ['りゃ', 'rya'], ['りゅ', 'ryu'], ['りょ', 'ryo'],
+                    ['ぎゃ', 'gya'], ['ぎゅ', 'gyu'], ['ぎょ', 'gyo'],
+                    ['じゃ', 'ja'], ['じゅ', 'ju'], ['じょ', 'jo'],
+                    ['びゃ', 'bya'], ['びゅ', 'byu'], ['びょ', 'byo'],
+                    ['ぴゃ', 'pya'], ['ぴゅ', 'pyu'], ['ぴょ', 'pyo']
+                ]
+            },
+            katakana: {
+                basic: [
+                    ['ア', 'a'], ['イ', 'i'], ['ウ', 'u'], ['エ', 'e'], ['オ', 'o'],
+                    ['カ', 'ka'], ['キ', 'ki'], ['ク', 'ku'], ['ケ', 'ke'], ['コ', 'ko'],
+                    ['サ', 'sa'], ['シ', 'shi'], ['ス', 'su'], ['セ', 'se'], ['ソ', 'so'],
+                    ['タ', 'ta'], ['チ', 'chi'], ['ツ', 'tsu'], ['テ', 'te'], ['ト', 'to'],
+                    ['ナ', 'na'], ['ニ', 'ni'], ['ヌ', 'nu'], ['ネ', 'ne'], ['ノ', 'no'],
+                    ['ハ', 'ha'], ['ヒ', 'hi'], ['フ', 'fu'], ['ヘ', 'he'], ['ホ', 'ho'],
+                    ['マ', 'ma'], ['ミ', 'mi'], ['ム', 'mu'], ['メ', 'me'], ['モ', 'mo'],
+                    ['ヤ', 'ya'], ['', ''], ['ユ', 'yu'], ['', ''], ['ヨ', 'yo'],
+                    ['ラ', 'ra'], ['リ', 'ri'], ['ル', 'ru'], ['レ', 're'], ['ロ', 'ro'],
+                    ['ワ', 'wa'], ['', ''], ['', ''], ['', ''], ['ヲ', 'wo'],
+                    ['ン', 'n'], ['', ''], ['', ''], ['', ''], ['', '']
+                ],
+                dakuon: [
+                    ['ガ', 'ga'], ['ギ', 'gi'], ['グ', 'gu'], ['ゲ', 'ge'], ['ゴ', 'go'],
+                    ['ザ', 'za'], ['ジ', 'ji'], ['ズ', 'zu'], ['ゼ', 'ze'], ['ゾ', 'zo'],
+                    ['ダ', 'da'], ['ヂ', 'ji'], ['ヅ', 'zu'], ['デ', 'de'], ['ド', 'do'],
+                    ['バ', 'ba'], ['ビ', 'bi'], ['ブ', 'bu'], ['ベ', 'be'], ['ボ', 'bo'],
+                    ['パ', 'pa'], ['ピ', 'pi'], ['プ', 'pu'], ['ペ', 'pe'], ['ポ', 'po']
+                ],
+                yoon: [
+                    ['キャ', 'kya'], ['キュ', 'kyu'], ['キョ', 'kyo'],
+                    ['シャ', 'sha'], ['シュ', 'shu'], ['ショ', 'sho'],
+                    ['チャ', 'cha'], ['チュ', 'chu'], ['チョ', 'cho'],
+                    ['ニャ', 'nya'], ['ニュ', 'nyu'], ['ニョ', 'nyo'],
+                    ['ヒャ', 'hya'], ['ヒュ', 'hyu'], ['ヒョ', 'hyo'],
+                    ['ミャ', 'mya'], ['ミュ', 'myu'], ['ミョ', 'myo'],
+                    ['リャ', 'rya'], ['リュ', 'ryu'], ['リョ', 'ryo'],
+                    ['ギャ', 'gya'], ['ギュ', 'gyu'], ['ギョ', 'gyo'],
+                    ['ジャ', 'ja'], ['ジュ', 'ju'], ['ジョ', 'jo'],
+                    ['ビャ', 'bya'], ['ビュ', 'byu'], ['ビョ', 'byo'],
+                    ['ピャ', 'pya'], ['ピュ', 'pyu'], ['ピョ', 'pyo']
+                ]
+            }
+        };
+
+        function createTable(data, columns) {
+            const table = document.createElement('table');
+            table.className = columns === 5 ? 'kana-table' : 'kana-table yoon-table';
+            let tbody = table.createTBody();
+            let row;
+
+            data.forEach((item, index) => {
+                if (index % columns === 0) {
+                    row = tbody.insertRow();
+                }
+                const cell = row.insertCell();
+                if (item[0]) {
+                    cell.innerHTML = `${item[0]}<span>${item[1]}</span>`;
+                }
+            });
+            return table;
+        }
+
+        function renderTables() {
+            const hiraganaContainer = document.getElementById('hiragana-tables');
+            const katakanaContainer = document.getElementById('katakana-tables');
+
+            // Hiragana
+            hiraganaContainer.innerHTML += '<h3>Huruf Dasar & Dakuon</h3>';
+            hiraganaContainer.appendChild(createTable(kanaData.hiragana.basic, 5));
+            hiraganaContainer.appendChild(createTable(kanaData.hiragana.dakuon, 5));
+            
+            hiraganaContainer.innerHTML += '<h3>Huruf Yōon (Gabungan)</h3>';
+            hiraganaContainer.appendChild(createTable(kanaData.hiragana.yoon, 3));
+
+            // Katakana
+            katakanaContainer.innerHTML += '<h3>Huruf Dasar & Dakuon</h3>';
+            katakanaContainer.appendChild(createTable(kanaData.katakana.basic, 5));
+            katakanaContainer.appendChild(createTable(kanaData.katakana.dakuon, 5));
+
+            katakanaContainer.innerHTML += '<h3>Huruf Yōon (Gabungan)</h3>';
+            katakanaContainer.appendChild(createTable(kanaData.katakana.yoon, 3));
+        }
+
+        document.addEventListener('DOMContentLoaded', renderTables);
+    </script>
+
+</body>
+</html>
